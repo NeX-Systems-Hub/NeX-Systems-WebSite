@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const NEXFLOWX_API_BASE = process.env.NEXFLOWX_API_BASE || 'https://api.nexflowx.tech';
+const NEXFLOWX_API_BASE = process.env.NEXFLOWX_API_BASE || 'https://api-core.nexflowx.tech';
 const NEXFLOWX_API_KEY = process.env.NEXFLOWX_API_KEY || '';
 const NEXFLOWX_STORE_ID = process.env.NEXFLOWX_STORE_ID || 'NeX-Store';
 

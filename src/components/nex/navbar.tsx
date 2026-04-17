@@ -1,17 +1,33 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Zap } from 'lucide-react';
+import { Menu, X, Zap, Globe, ChevronDown, Check } from 'lucide-react';
 import { useLanguage, useInitLanguage } from '@/hooks/use-language';
 import { type Locale, localeNames } from '@/lib/i18n';
 
 const navLinks = ['home', 'services', 'product', 'enterprise', 'support'] as const;
 
+const localeFlags: Record<Locale, string> = {
+  pt: '🇵🇹',
+  en: '🇬🇧',
+  es: '🇪🇸',
+  fr: '🇫🇷',
+};
+
+const localeLabels: Record<Locale, string> = {
+  pt: 'Português',
+  en: 'English',
+  es: 'Español',
+  fr: 'Français',
+};
+
 export function Navbar() {
   const { locale, setLocale, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+  const langRef = useRef<HTMLDivElement>(null);
   const translations = t();
 
   useInitLanguage();
@@ -35,12 +51,28 @@ export function Navbar() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Close lang dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setLangOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const scrollToSection = (section: string) => {
     const el = document.getElementById(section);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     setIsOpen(false);
+  };
+
+  const handleSetLocale = (loc: Locale) => {
+    setLocale(loc);
+    setLangOpen(false);
   };
 
   return (
@@ -84,21 +116,48 @@ export function Navbar() {
               </button>
             ))}
 
-            {/* Language Switcher */}
-            <div className="flex items-center gap-0.5 ml-3 pl-3 border-l border-nex-dark-border">
-              {(Object.keys(localeNames) as Locale[]).map((loc) => (
-                <button
-                  key={loc}
-                  onClick={() => setLocale(loc)}
-                  className={`px-1.5 lg:px-2 py-1 text-[10px] lg:text-xs font-mono uppercase transition-all duration-200 rounded ${
-                    locale === loc
-                      ? 'text-nex-matrix bg-nex-matrix/10'
-                      : 'text-nex-muted hover:text-foreground'
-                  }`}
-                >
-                  {loc}
-                </button>
-              ))}
+            {/* Language Switcher - Desktop */}
+            <div ref={langRef} className="relative ml-3 pl-3 border-l border-nex-dark-border">
+              <button
+                onClick={() => setLangOpen(!langOpen)}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-mono text-nex-muted hover:text-foreground hover:bg-nex-surface/50 transition-all"
+                aria-label="Change language"
+              >
+                <Globe className="w-3.5 h-3.5" />
+                <span>{localeFlags[locale]}</span>
+                <span className="text-[11px]">{localeLabels[locale]}</span>
+                <ChevronDown className={`w-3 h-3 transition-transform ${langOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              <AnimatePresence>
+                {langOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 top-full mt-2 w-44 py-1.5 bg-nex-dark-card border border-nex-dark-border rounded-xl shadow-2xl overflow-hidden"
+                  >
+                    {(Object.keys(localeNames) as Locale[]).map((loc) => (
+                      <button
+                        key={loc}
+                        onClick={() => handleSetLocale(loc)}
+                        className={`w-full flex items-center justify-between px-3 py-2 text-xs font-mono transition-all ${
+                          locale === loc
+                            ? 'text-nex-matrix bg-nex-matrix/10'
+                            : 'text-nex-muted hover:text-foreground hover:bg-nex-surface/30'
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <span>{localeFlags[loc]}</span>
+                          <span>{localeLabels[loc]}</span>
+                        </span>
+                        {locale === loc && <Check className="w-3.5 h-3.5" />}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </nav>
 
@@ -128,25 +187,34 @@ export function Navbar() {
                 <button
                   key={link}
                   onClick={() => scrollToSection(link)}
-                  className="block w-full text-left px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-mono text-nex-muted hover:text-nex-matrix hover:bg-nex-matrix/5 rounded transition-all uppercase tracking-wider"
+                  className="block w-full text-left px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-mono text-nex-muted hover:text-nex-matrix hover:bg-nex-matrix/5 rounded-lg transition-all uppercase tracking-wider"
                 >
                   {translations.nav[link as keyof typeof translations.nav]}
                 </button>
               ))}
-              <div className="flex items-center gap-1.5 sm:gap-2 pt-2 mt-2 border-t border-nex-dark-border">
-                {(Object.keys(localeNames) as Locale[]).map((loc) => (
-                  <button
-                    key={loc}
-                    onClick={() => setLocale(loc)}
-                    className={`flex-1 py-2 text-[10px] sm:text-xs font-mono uppercase text-center rounded transition-all ${
-                      locale === loc
-                        ? 'text-nex-matrix bg-nex-matrix/10 border border-nex-matrix/30'
-                        : 'text-nex-muted hover:text-foreground'
-                    }`}
-                  >
-                    {loc}
-                  </button>
-                ))}
+
+              {/* Language Selector - Mobile */}
+              <div className="pt-2 mt-2 border-t border-nex-dark-border">
+                <div className="flex items-center gap-2 px-4 py-2 text-[10px] sm:text-xs font-mono text-nex-muted uppercase tracking-wider">
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>Idioma</span>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5 px-3 pt-1">
+                  {(Object.keys(localeNames) as Locale[]).map((loc) => (
+                    <button
+                      key={loc}
+                      onClick={() => handleSetLocale(loc)}
+                      className={`flex items-center gap-2 px-3 py-2.5 text-xs font-mono rounded-lg transition-all ${
+                        locale === loc
+                          ? 'text-nex-matrix bg-nex-matrix/10 border border-nex-matrix/30'
+                          : 'text-nex-muted hover:text-foreground hover:bg-nex-surface/30'
+                      }`}
+                    >
+                      <span>{localeFlags[loc]}</span>
+                      <span>{localeLabels[loc]}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </motion.div>

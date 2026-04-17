@@ -69,12 +69,10 @@ export default function Home() {
     setSelectedSolutionId(solutionId);
     setSelectedSolutionName(solutionName);
     setIsDevFormOpen(true);
-    document.body.style.overflow = 'hidden';
   };
 
   const handleCloseDevForm = () => {
     setIsDevFormOpen(false);
-    document.body.style.overflow = '';
   };
 
   return (

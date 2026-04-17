@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { SectionReveal } from './glitch-text';
 import { useLanguage } from '@/hooks/use-language';
-import { ArrowRight, Building2, Globe, Rocket } from 'lucide-react';
+import { ArrowRight, Building2, Globe, Zap } from 'lucide-react';
 
 const IMG_BASE = 'https://raw.githubusercontent.com/nextrustx-hub/NeXFlowX/main/public/images';
 
@@ -236,14 +236,14 @@ export function EnterpriseSolutions({ onOpenDevForm }: EnterpriseSolutionsProps)
                       ))}
                     </div>
 
-                    {/* Custom Development Button */}
+                    {/* Hire Now Button - Simple & Clean */}
                     <button
                       onClick={() => onOpenDevForm(solution.id, solution.name)}
-                      className="w-full flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-gradient-to-r from-nex-matrix/10 via-nex-cyber/10 to-nex-matrix/10 border border-nex-matrix/30 hover:border-nex-matrix/60 rounded-lg text-nex-matrix hover:text-foreground font-mono text-[10px] sm:text-xs uppercase tracking-wider transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,255,65,0.15)] group/btn"
+                      className="w-full flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 bg-nex-matrix text-nex-dark font-bold font-mono text-xs sm:text-sm rounded-lg hover:shadow-[0_0_24px_rgba(0,255,65,0.35)] transition-all duration-300 group/btn"
                     >
-                      <Rocket className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                      <span>{translations.devForm?.btnLabel || 'Desenvolvimento Personalizado -7 dias'}</span>
-                      <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
+                      <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      <span>{translations.devForm?.btnLabel || 'CONTRATAR AGORA'}</span>
+                      <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover/btn:translate-x-1 transition-transform" />
                     </button>
                   </div>
                 </motion.div>
